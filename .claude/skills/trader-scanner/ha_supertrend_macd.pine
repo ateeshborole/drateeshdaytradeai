@@ -1,0 +1,36 @@
+//@version=5
+// Heikin Ashi + Supertrend + MACD buy signal (same rule as signals.py).
+// Use on a DAILY chart with normal (not Heikin Ashi) candles: the script
+// computes Heikin Ashi itself, so Supertrend and MACD stay on real prices.
+// A signal is a chart matching a rule, not a recommendation to buy.
+indicator("HA + Supertrend + MACD buy", overlay = true)
+
+atrLen      = input.int(10, "Supertrend ATR length")
+factor      = input.float(3.0, "Supertrend factor")
+fastLen     = input.int(12, "MACD fast")
+slowLen     = input.int(26, "MACD slow")
+sigLen      = input.int(9, "MACD signal")
+crossWithin = input.int(3, "MACD cross within N bars", minval = 1)
+fresh       = input.bool(true, "HA: candle before the two greens must be red")
+
+// Heikin Ashi
+haClose = (open + high + low + close) / 4
+var float haOpen = na
+haOpen := na(haOpen[1]) ? (open + close) / 2 : (haOpen[1] + haClose[1]) / 2
+green    = haClose > haOpen
+twoGreen = green and green[1] and (not fresh or not green[2])
+
+// Supertrend (direction < 0 = uptrend)
+[st, dir] = ta.supertrend(factor, atrLen)
+stBull = dir < 0
+
+// MACD crossed above signal while below zero, within the last N bars
+[m, s, _] = ta.macd(close, fastLen, slowLen, sigLen)
+crossBelowZero = ta.crossover(m, s) and m < 0 and s < 0
+recentCross    = nz(ta.barssince(crossBelowZero), 9999) < crossWithin
+
+buy = twoGreen and stBull and recentCross
+
+plot(st, "Supertrend", color = stBull ? color.green : color.red, linewidth = 2)
+plotshape(buy, "Buy signal", shape.labelup, location.belowbar, color.green, text = "BUY", textcolor = color.white, size = size.small)
+alertcondition(buy, "HA + Supertrend + MACD buy", "{{ticker}}: 2 green HA, Supertrend up, MACD crossed up below zero (close {{close}})")

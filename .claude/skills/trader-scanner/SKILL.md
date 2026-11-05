@@ -131,6 +131,27 @@ weekend or holiday, after the close, or after `no_entries_after` (an expired
 setup) it prints one plain line and writes nothing. The 1:00 PM early closes
 are in the calendar.
 
+## The signal scan: Heikin Ashi + Supertrend + MACD (daily chart)
+
+```bash
+python3 "$SKILL/signals.py"                    # whole universe -> trader/signals.json + trader/signals_tradingview.txt
+python3 "$SKILL/signals.py" --symbols TSLA,AMD # a few names
+python3 "$SKILL/signals.py" --any-ha --cross-within 1
+```
+
+A daily chart matches when all three hold on the last completed bar:
+
+1. Heikin Ashi: the last two candles are green (HA close above HA open), and
+   the one before them is not (a fresh run; `--any-ha` drops that).
+2. Supertrend (ATR 10, factor 3, `--st-length`, `--st-factor`) is bullish.
+3. MACD (12, 26, 9) crossed above its signal line while both were below zero,
+   on one of the last `--cross-within` bars (3).
+
+Stage 1 reads spark closes for every symbol (liquidity filter, then the MACD
+rule); stage 2 fetches the v8 chart with real OHLC for each MACD candidate.
+Today's bar counts only after 4:00 PM ET. `ha_supertrend_macd.pine` is the
+same rule as a TradingView indicator with an alert condition.
+
 ## Data and limits
 
 - Yahoo's chart and spark endpoints are free, unofficial and can lag. Bars are

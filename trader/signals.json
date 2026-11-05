@@ -1,0 +1,42 @@
+{
+  "created_by": "trader-scanner/signals",
+  "created_at": "2026-11-05T19:55:01Z",
+  "mode": "signal_ha_supertrend_macd",
+  "rule": "Heikin Ashi: last 2 candles green (the one before red); Supertrend(10, 3) bullish; MACD(12,26,9) crossed above signal below zero within the last 3 bars",
+  "as_of": "2026-11-04 close",
+  "universe": 5936,
+  "scanned": 107,
+  "failed": 0,
+  "source": "yahoo",
+  "filters": {
+    "min_price": 5.0,
+    "min_volume": 1000000
+  },
+  "note": "A scan is a list of charts that match a rule, not a list of stocks to buy.",
+  "hits": [
+    {
+      "symbol": "TTWO",
+      "price": 208.9,
+      "close_date": "2026-11-04",
+      "volume": 3740421,
+      "ha_two_green": true,
+      "supertrend_bull": true,
+      "supertrend": 183.79,
+      "macd_cross_bars_ago": 0,
+      "macd": -3.2881,
+      "macd_signal": -3.5661
+    },
+    {
+      "symbol": "LI",
+      "price": 11.58,
+      "close_date": "2026-11-04",
+      "volume": 3836178,
+      "ha_two_green": true,
+      "supertrend_bull": true,
+      "supertrend": 10.61,
+      "macd_cross_bars_ago": 0,
+      "macd": -0.0766,
+      "macd_signal": -0.0992
+    }
+  ]
+}
